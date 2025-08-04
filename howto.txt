@@ -1,0 +1,72 @@
+degs:projects% mkdir slurmcontainer
+degs:projects% cd slurm
+cd: no such file or directory: slurm
+degs:projects% cd slurmcontainer 
+degs:slurmcontainer% ls
+degs:slurmcontainer% colima start
+INFO[0000] starting colima                              
+INFO[0000] runtime: docker                              
+INFO[0003] creating and starting ...                     context=vm
+INFO[0003] downloading disk image ...                    context=vm
+INFO[0042] provisioning ...                              context=docker
+INFO[0044] starting ...                                  context=docker
+INFO[0045] done                                         
+degs:slurmcontainer% docker run hello-world
+
+Unable to find image 'hello-world:latest' locally
+latest: Pulling from library/hello-world
+e6590344b1a5: Pull complete 
+Digest: sha256:ec153840d1e635ac434fab5e377081f17e0e15afab27beb3f726c3265039cfff
+Status: Downloaded newer image for hello-world:latest
+
+Hello from Docker!
+This message shows that your installation appears to be working correctly.
+
+To generate this message, Docker took the following steps:
+ 1. The Docker client contacted the Docker daemon.
+ 2. The Docker daemon pulled the "hello-world" image from the Docker Hub.
+    (amd64)
+ 3. The Docker daemon created a new container from that image which runs the
+    executable that produces the output you are currently reading.
+ 4. The Docker daemon streamed that output to the Docker client, which sent it
+    to your terminal.
+
+To try something more ambitious, you can run an Ubuntu container with:
+ $ docker run -it ubuntu bash
+
+Share images, automate workflows, and more with a free Docker ID:
+ https://hub.docker.com/
+
+For more examples and ideas, visit:
+ https://docs.docker.com/get-started/
+
+degs:slurmcontainer% colima status
+INFO[0000] colima is running using macOS Virtualization.Framework 
+INFO[0000] arch: x86_64                                 
+INFO[0000] runtime: docker                              
+INFO[0000] mountType: sshfs                             
+INFO[0000] socket: unix:///Users/degs/.colima/default/docker.sock 
+
+
+
+degs:debian-slim% docker build -t minimal-debian .
+DEPRECATED: The legacy builder is deprecated and will be removed in a future release.
+            Install the buildx component to build images with BuildKit:
+            https://docs.docker.com/go/buildx/
+
+Sending build context to Docker daemon  2.048kB
+Step 1/4 : FROM debian:12-slim
+ ---> 8168deeb41a7
+Step 2/4 : RUN apt-get update && apt-get install -y     wget     curl     nano     procps     && rm -rf /var/lib/apt/lists/*
+ ---> Using cache
+ ---> 637a0779560f
+Step 3/4 : WORKDIR /app
+ ---> Using cache
+ ---> 0d08a8303af4
+Step 4/4 : CMD ["/bin/bash"]
+ ---> Using cache
+ ---> c215e5246c46
+Successfully built c215e5246c46
+Successfully tagged minimal-debian:latest
+degs:debian-slim% docker run -it --name my-debian minimal-debian
+root@ec4ccddac722:/app# 
