@@ -35,7 +35,7 @@ RUN apt-get update && apt-get install -y \
 RUN mkdir -p /slurm/mysql && \
     sed -i 's|^datadir.*|datadir = /slurm/mysql|' /etc/mysql/mariadb.conf.d/50-server.cnf
 #copy the script over
-COPY start-mariadb.sh /usr/local/bin/start-mariadb.sh
+COPY conf/start-mariadb.sh /usr/local/bin/start-mariadb.sh
 RUN chmod +x /usr/local/bin/start-mariadb.sh
 
 
