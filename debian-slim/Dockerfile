@@ -1,7 +1,9 @@
 # use rebuild.sh to remake this
 # I've been running it on macos via:
-# colima start --mount $HOME/slurm  
+# colima start --mount-type=virtiofs --mount $HOME/slurm
 # docker run -h slurmofanton -it --rm -v ~/slurm:/slurm slurmcontroller bash
+# note:  you might have to update ~/.colima/default/colima.yaml to make
+#        The mount writable
 #
 # next: mariadb-install-db --user=mysql --basedir=/usr --datadir=/slurm/mysql
 # mysqld --datadir=/slurm/mysql
