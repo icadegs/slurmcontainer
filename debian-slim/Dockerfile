@@ -28,10 +28,18 @@ RUN apt-get update && apt-get install -y \
     
 #    \
 #    && rm -rf /var/lib/apt/lists/*
+
+# stop the startup of mariadb
+RUN echo 'exit 101' > /usr/sbin/policy-rc.d && chmod +x /usr/sbin/policy-rc.d
+
 RUN apt-get update && apt-get install -y \
     mariadb-server \
     mariadb-client \
     mariadb-server-core 
+
+RUN rm -f /usr/sbin/policy-rc.d
+    
+    
 
 # Create mount point and override datadir
 RUN mkdir -p /slurm/mysql && \
