@@ -19,3 +19,4 @@ exec mysqld \
     --datadir="$DATADIR" \
     --socket="$RUNDIR/mysqld.sock" \
     --pid-file="$RUNDIR/mysqld.pid"
+
