@@ -31,13 +31,22 @@ RUN apt-get update && apt-get install -y \
 #    \
 #    && rm -rf /var/lib/apt/lists/*
 
-# stop the startup of mariadb
-RUN echo 'exit 101' > /usr/sbin/policy-rc.d && chmod +x /usr/sbin/policy-rc.d
+# Block any service start/stop during build (canonical Debian way)
+RUN printf '#!/bin/sh\nexit 101\n' > /usr/sbin/policy-rc.d \
+ && chmod +x /usr/sbin/policy-rc.d \
+ # No-op stubs for systemctl/initctl some packages call
+ && ln -sf /bin/true /bin/systemctl || true \
+ && ln -sf /bin/true /sbin/initctl || true
 
 RUN apt-get update && apt-get install -y \
     mariadb-server \
     mariadb-client \
     mariadb-server-core 
+
+# we're going to use an external mount, but I want these here to see if I got my configs correct    
+RUN mkdir -p /var/lib/mysql /run/mysqld \
+ && chown -R mysql:mysql /var/lib/mysql /run/mysqld
+
 
 # Clean up and re-allow services for runtime containers
 RUN rm -f /usr/sbin/policy-rc.d && rm -rf /var/lib/apt/lists/*
