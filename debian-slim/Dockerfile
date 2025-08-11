@@ -14,6 +14,8 @@ FROM debian:12
 #mariadb didn't want to install on slim??
 #FROM debian:12-slim
 
+ENV DEBIAN_FRONTEND=noninteractive
+
 # Install tools needed to install .deb files
 RUN apt-get update && apt-get install -y \
     wget \
@@ -32,13 +34,13 @@ RUN apt-get update && apt-get install -y \
 # stop the startup of mariadb
 RUN echo 'exit 101' > /usr/sbin/policy-rc.d && chmod +x /usr/sbin/policy-rc.d
 
-#RUN apt-get update && apt-get install -y \
-#    mariadb-server \
-#    mariadb-client \
-#    mariadb-server-core 
+RUN apt-get update && apt-get install -y \
+    mariadb-server \
+    mariadb-client \
+    mariadb-server-core 
 
-RUN rm -f /usr/sbin/policy-rc.d
-    
+# Clean up and re-allow services for runtime containers
+RUN rm -f /usr/sbin/policy-rc.d && rm -rf /var/lib/apt/lists/*
     
 
 # Create mount point and override datadir
