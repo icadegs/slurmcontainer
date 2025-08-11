@@ -32,18 +32,18 @@ RUN apt-get update && apt-get install -y \
 # stop the startup of mariadb
 RUN echo 'exit 101' > /usr/sbin/policy-rc.d && chmod +x /usr/sbin/policy-rc.d
 
-RUN apt-get update && apt-get install -y \
-    mariadb-server \
-    mariadb-client \
-    mariadb-server-core 
+#RUN apt-get update && apt-get install -y \
+#    mariadb-server \
+#    mariadb-client \
+#    mariadb-server-core 
 
 RUN rm -f /usr/sbin/policy-rc.d
     
     
 
 # Create mount point and override datadir
-RUN mkdir -p /slurm/mysql && \
-    sed -i 's|^datadir.*|datadir = /slurm/mysql|' /etc/mysql/mariadb.conf.d/50-server.cnf
+#RUN mkdir -p /slurm/mysql && \
+#    sed -i 's|^datadir.*|datadir = /slurm/mysql|' /etc/mysql/mariadb.conf.d/50-server.cnf
 #copy the script over
 COPY conf/start-mariadb.sh /usr/local/bin/start-mariadb.sh
 #RUN chmod +x /usr/local/bin/start-mariadb.sh
@@ -74,5 +74,5 @@ RUN rm /tmp/slurm-master.deb
 # && hostname slurmofanton
 
 WORKDIR /app
-CMD ["/usr/local/bin/start-mariadb.sh"]
-# CMD ["/bin/bash"]
+#CMD ["/usr/local/bin/start-mariadb.sh"]
+CMD ["/bin/bash"]
