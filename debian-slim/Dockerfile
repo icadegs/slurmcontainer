@@ -88,4 +88,4 @@ RUN rm /tmp/slurm-master.deb
 
 WORKDIR /app
 CMD ["/usr/local/bin/start-mariadb.sh"]
-CMD ["/bin/bash"]
+#CMD ["/bin/bash"]
