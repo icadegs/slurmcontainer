@@ -87,5 +87,5 @@ RUN rm /tmp/slurm-master.deb
 # && hostname slurmofanton
 
 WORKDIR /app
-#CMD ["/usr/local/bin/start-mariadb.sh"]
+CMD ["/usr/local/bin/start-mariadb.sh"]
 CMD ["/bin/bash"]
