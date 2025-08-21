@@ -18,5 +18,6 @@ echo "Starting MariaDB..."
 exec mysqld \
     --datadir="$DATADIR" \
     --socket="$RUNDIR/mysqld.sock" \
-    --pid-file="$RUNDIR/mysqld.pid"
+    --pid-file="$RUNDIR/mysqld.pid" \
+    --user=mysql
 
