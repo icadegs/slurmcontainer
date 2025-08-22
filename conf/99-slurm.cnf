@@ -1,0 +1,25 @@
+# Unified MariaDB config pointing to /slurm
+[mysqld]
+user = mysql
+
+# Core paths
+datadir   = /slurm/mysql
+socket    = /slurm/run/mysqld.sock
+pid-file  = /slurm/run/mysqld.pid
+tmpdir    = /slurm/tmp
+
+# Optional: put logs under /slurm too
+log_error        = /slurm/log/error.log
+general_log     = 1
+general_log_file= /slurm/log/general.log
+slow_query_log  = 1
+slow_query_log_file = /slurm/log/slow.log
+
+# Client defaults (applies to mysql, mysqldump, etc.)
+[client]
+socket = /slurm/run/mysqld.sock
+
+# Also help the mysql CLI specifically
+[mysql]
+socket = /slurm/run/mysqld.sock
+

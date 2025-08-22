@@ -52,7 +52,10 @@ RUN mkdir -p /var/lib/mysql /run/mysqld \
 
 # Clean up and re-allow services for runtime containers
 RUN rm -f /usr/sbin/policy-rc.d && rm -rf /var/lib/apt/lists/*
-    
+
+# After installing mariadb-server
+COPY conf/99-slurm.cnf /etc/mysql/mariadb.conf.d/99-slurm.cnf
+
 
 # Create mount point and override datadir
 #RUN mkdir -p /slurm/mysql && \
@@ -60,6 +63,10 @@ RUN rm -f /usr/sbin/policy-rc.d && rm -rf /var/lib/apt/lists/*
 #copy the script over
 COPY conf/start-mariadb.sh /usr/local/bin/start-mariadb.sh
 RUN chmod +x /usr/local/bin/start-mariadb.sh
+
+
+
+
 
 
 # Copy local files into the image
@@ -85,7 +92,10 @@ RUN rm /tmp/slurm-master.deb
 # you apparently can use -h at runtime to override this
 #RUN echo "slurmofanton" > /etc/hostname \
 # && hostname slurmofanton
+COPY conf/icasetupmysql.sh /usr/local/bin/icasetupmysql.sh
+RUN chmod +x /usr/local/bin/icasetupmysql.sh
+ENTRYPOINT ["/usr/local/bin/icasetupmysql.sh"]
 
 WORKDIR /app
-CMD ["/usr/local/bin/start-mariadb.sh"]
+# CMD ["/usr/local/bin/start-mariadb.sh"]
 #CMD ["/bin/bash"]
