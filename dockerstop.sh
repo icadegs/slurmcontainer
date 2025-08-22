@@ -3,10 +3,16 @@
 CONTAINER="slurmcontroller"
 TIMEOUT=30
 
+# Check if the container exists (running or stopped)
+if ! docker ps -a --format '{{.Names}}' | grep -q "^${CONTAINER}\$"; then
+    echo "Container '$CONTAINER' does not exist. Nothing to stop."
+    exit 0
+fi
+
 echo "Stopping $CONTAINER with timeout $TIMEOUT seconds..."
 docker stop -t $TIMEOUT "$CONTAINER" &
 
-# Simple countdown loop
+# Countdown loop
 for i in $(seq $TIMEOUT -1 1); do
     printf "\rShutting down... %2d seconds remaining" $i
     sleep 1
