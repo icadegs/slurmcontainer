@@ -1,14 +1,26 @@
-From the container, the program looks for the /slurm mount.
-On luigi, this is in /volume2/slurm.  You need to create the following 
-directories for this to work:
+From the container, the program looks for the /slurm mount. On luigi, this is in /volume2/slurm.  You need to create the following  directories for this to work:
 slurm/log
 slurm/mysql
 slurm/run
 slurm/tmp
 
-This is basically the single point of failure.
+This is basically the single point of failure to start.  The next item is that the mysql database needs to be configured and the socket is not  honored.  Firstly, check your configuration:
+# mysql --print-defaults
+mysql would have been started with the following arguments:
+--socket=/run/mysqld/mysqld.sock --socket=/slurm/run/mysqld.sock --socket=/slurm/run/mysqld.sock 
 
+If this is good, it means that we are setup to use external storage, you then need to update your database using:
 
+mysql_secure_installation --socket=/slurm/run/mysqld.sock
+Set the root password to be
+slurmdbroot
 
+You then need to setup slurm in the database.
+mysql -u root -p ...and you'll be prompted for the password of slurmdbroot,
+and create the tables with the following series of commands:
 
+CREATE DATABASE slurm_acct_db;
+CREATE USER 'slurm'@'localhost' IDENTIFIED BY 'icaslurm';
+GRANT ALL ON slurm_acct_db.* TO 'slurm'@'localhost';
+FLUSH PRIVILEGES;
 
