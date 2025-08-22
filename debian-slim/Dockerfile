@@ -97,5 +97,5 @@ RUN chmod +x /usr/local/bin/icasetupmysql.sh
 ENTRYPOINT ["/usr/local/bin/icasetupmysql.sh"]
 
 WORKDIR /app
-# CMD ["/usr/local/bin/start-mariadb.sh"]
+CMD ["/usr/local/bin/start-mariadb.sh"]
 #CMD ["/bin/bash"]
