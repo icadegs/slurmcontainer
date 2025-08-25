@@ -115,7 +115,9 @@ COPY conf/start-mariadb.sh /usr/local/bin/start-mariadb.sh
 RUN chmod +x /usr/local/bin/start-mariadb.sh
 
 
-
+#NOTE:  Due to library mismatches, the slurm dep file was replaced
+# by a compile, but I still kept the configurate copies and
+# the deb information commented ou
 
 
 
@@ -127,7 +129,6 @@ RUN chmod +x /usr/local/bin/start-mariadb.sh
 # Create slurm user and group before installing the package
 RUN groupadd -r slurm && useradd -r -g slurm -d /var/lib/slurm -s /usr/sbin/nologin slurm
 
-
 # Install the SLURM .deb file
 # RUN dpkg -i /tmp/slurm-master.deb || apt-get install -f -y
 COPY conf/cgroup_allowed_devices_file.conf /etc/slurmica/cgroup_allowed_devices_file.conf
@@ -136,7 +137,7 @@ COPY conf/slurm.conf /etc/slurmica/slurm.conf
 COPY conf/slurmdb.conf /etc/slurmica/slurmdb.conf
 
 # Cleanup
-RUN rm /tmp/slurm-master.deb
+#RUN rm /tmp/slurm-master.deb
 
 #set the hostname
 # you apparently can use -h at runtime to override this
