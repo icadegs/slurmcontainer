@@ -115,7 +115,7 @@ RUN chmod +x /usr/local/bin/start-mariadb.sh
 
 # Copy local files into the image
 # Copy .deb package and optional config file into the image
-COPY deb/slurm-master_25.05.1_amd64.deb /tmp/slurm-master.deb
+# COPY deb/slurm-master_25.05.1_amd64.deb /tmp/slurm-master.deb
 
 
 # Create slurm user and group before installing the package
@@ -123,7 +123,7 @@ RUN groupadd -r slurm && useradd -r -g slurm -d /var/lib/slurm -s /usr/sbin/nolo
 
 
 # Install the SLURM .deb file
-RUN dpkg -i /tmp/slurm-master.deb || apt-get install -f -y
+# RUN dpkg -i /tmp/slurm-master.deb || apt-get install -f -y
 COPY conf/cgroup_allowed_devices_file.conf /etc/slurmica/cgroup_allowed_devices_file.conf
 COPY conf/cgroup.conf /etc/slurmica/cgroup.conf
 COPY conf/slurm.conf /etc/slurmica/slurm.conf
