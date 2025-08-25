@@ -19,35 +19,39 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     libhwloc-dev libjson-c-dev libssl-dev libpam0g-dev \
     libmariadb-dev-compat libmariadb-dev \
     munge libmunge-dev \
-  libmunge2 \
-  libhwloc-dev \
-  libhdf5-dev \
-  libpmix-dev \
-  libjson-c-dev \
-  libyaml-dev \
-  libfreeipmi-dev \
-  libcurl4-openssl-dev \
-  git \
- && rm -rf /var/lib/apt/lists/*
+    libmunge2 \
+    libhwloc-dev \
+    libhdf5-dev \
+    libpmix-dev \
+    libjson-c-dev \
+    libyaml-dev \
+    libfreeipmi-dev \
+    libcurl4-openssl-dev \
+    libreadline-dev \
+    libncurses5-dev \
+    libncursesw5-dev \
+    python3 \
+    git \
+    && rm -rf /var/lib/apt/lists/*
 
 # Copy your tarball from the build context
 COPY src/slurm-25.05.1.tar.bz2 /tmp/slurm.tar.bz2
 
 WORKDIR /tmp
 RUN tar -xjf /tmp/slurm.tar.bz2 \
-&& cd /tmp/slurm-25.05.1 \
- && ./configure \
-  --prefix=/usr \
-  --sysconfdir=/etc/slurmica \
-  --with-munge \
-  --with-hwloc \
-  --with-pmix \
-  --with-hdf5 \
-  --with-json \
-  --with-yaml \
-  --with-libcurl \
- && make -j"$(nproc)" \
- && make install DESTDIR=/tmp/pkgroot
+    && cd /tmp/slurm-25.05.1 \
+    && ./configure \
+    --prefix=/usr \
+    --sysconfdir=/etc/slurmica \
+    --with-munge \
+    --with-hwloc \
+    --with-pmix \
+    --with-hdf5 \
+    --with-json \
+    --with-yaml \
+    --with-libcurl \
+    && make -j"$(nproc)" \
+    && make install DESTDIR=/tmp/pkgroot
 
 
 # ---------- Stage 2: the rest of it----------
@@ -70,18 +74,18 @@ RUN apt-get update && apt-get install -y \
     zsh \
     screen 
 
-    
-    
-    
+
+
+
 #    \
 #    && rm -rf /var/lib/apt/lists/*
 
 # Block any service start/stop during build (canonical Debian way)
 RUN printf '#!/bin/sh\nexit 101\n' > /usr/sbin/policy-rc.d \
- && chmod +x /usr/sbin/policy-rc.d \
- # No-op stubs for systemctl/initctl some packages call
- && ln -sf /bin/true /bin/systemctl || true \
- && ln -sf /bin/true /sbin/initctl || true
+    && chmod +x /usr/sbin/policy-rc.d \
+    # No-op stubs for systemctl/initctl some packages call
+    && ln -sf /bin/true /bin/systemctl || true \
+    && ln -sf /bin/true /sbin/initctl || true
 
 RUN apt-get update && apt-get install -y \
     mariadb-server \
@@ -90,9 +94,9 @@ RUN apt-get update && apt-get install -y \
 
 # we're going to use an external mount, but I want these here to see if I got my configs correct    
 RUN mkdir -p /var/lib/mysql /run/mysqld \
- && chown -R mysql:mysql /var/lib/mysql /run/mysqld
+    && chown -R mysql:mysql /var/lib/mysql /run/mysqld
 
- # Bring in the compiled Slurm files from the builder
+# Bring in the compiled Slurm files from the builder
 COPY --from=build /tmp/pkgroot/ /
 
 # Clean up and re-allow services for runtime containers
