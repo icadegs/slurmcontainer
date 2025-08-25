@@ -147,7 +147,7 @@ COPY conf/icasetupmysql.sh /usr/local/bin/icasetupmysql.sh
 RUN chmod +x /usr/local/bin/icasetupmysql.sh
 ENTRYPOINT ["/usr/local/bin/icasetupmysql.sh"]
 
-COPY conf/iicasetupslurm.sh /usr/local/bin/icasetupslurm.sh
+COPY conf/icasetupslurm.sh /usr/local/bin/icasetupslurm.sh
 RUN chmod +x /usr/local/bin/icasetupslurm.sh
 ENTRYPOINT ["/usr/local/bin/icasetupslurm.sh"]
 
