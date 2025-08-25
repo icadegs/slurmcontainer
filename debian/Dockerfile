@@ -147,6 +147,10 @@ COPY conf/icasetupmysql.sh /usr/local/bin/icasetupmysql.sh
 RUN chmod +x /usr/local/bin/icasetupmysql.sh
 ENTRYPOINT ["/usr/local/bin/icasetupmysql.sh"]
 
+COPY conf/iicasetupslurm.sh /usr/local/bin/icasetupslurm.sh
+RUN chmod +x /usr/local/bin/icasetupslurm.sh
+ENTRYPOINT ["/usr/local/bin/icasetupslurm.sh"]
+
 WORKDIR /app
 CMD ["/usr/local/bin/start-mariadb.sh"]
 #CMD ["/bin/bash"]
