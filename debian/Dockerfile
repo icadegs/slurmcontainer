@@ -28,6 +28,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     libfreeipmi-dev \
     libcurl4-openssl-dev \
     libreadline-dev \
+    readline-common \
     libncurses5-dev \
     libncursesw5-dev \
     python3 \
