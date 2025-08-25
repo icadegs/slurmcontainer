@@ -35,7 +35,8 @@ COPY src/slurm-25.05.1.tar.bz2 /tmp/slurm.tar.bz2
 
 WORKDIR /tmp
 RUN tar -xjf /tmp/slurm.tar.bz2 \
- && cd /tmp/slurm-25.05.1 \
+&& cd /tmp/slurm-25.05.1 \
+ && ./configure \
   --prefix=/usr \
   --sysconfdir=/etc/slurmica \
   --with-munge \
