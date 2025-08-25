@@ -19,8 +19,14 @@ You then need to setup slurm in the database.
 mysql -u root -p ...and you'll be prompted for the password of slurmdbroot,
 and create the tables with the following series of commands:
 
-CREATE DATABASE slurm_acct_db;
-CREATE USER 'slurm'@'localhost' IDENTIFIED BY 'icaslurm';
+CREATE DATABASE IF NOT EXISTS slurm_acct_db;
+USE slurm_acct_db;
+CREATE USER IF NOT EXISTS 'slurm'@'localhost';
+ALTER USER 'slurm'@'localhost' IDENTIFIED BY 'icaslurm';
 GRANT ALL ON slurm_acct_db.* TO 'slurm'@'localhost';
 FLUSH PRIVILEGES;
+
+
+mysql -u slurm -p with the password of icaslurm
+
 
