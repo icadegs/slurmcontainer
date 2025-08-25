@@ -9,7 +9,47 @@
 # mysqld --datadir=/slurm/mysql
 # you need to run mysql_secure_installation  in the image
 
+# ---------- Stage 1: build Slurm on Debian 12 (glibc 2.36) ----------
+FROM debian:12-slim AS build
 
+ENV DEBIAN_FRONTEND=noninteractive
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    build-essential ca-certificates curl gnupg \
+    pkg-config autoconf automake libtool \
+    libhwloc-dev libjson-c-dev libssl-dev libpam0g-dev \
+    libmariadb-dev-compat libmariadb-dev \
+    munge libmunge-dev \
+  libmunge2 \
+  libhwloc-dev \
+  libhdf5-dev \
+  libpmix-dev \
+  libjson-c-dev \
+  libyaml-dev \
+  libfreeipmi-dev \
+  libcurl4-openssl-dev \
+  git
+ && rm -rf /var/lib/apt/lists/*
+
+# Copy your tarball from the build context
+COPY src/slurm-25.05.1.tar.bz2 /tmp/slurm.tar.bz2
+
+WORKDIR /tmp
+RUN tar -xjf /tmp/slurm.tar.bz2 \
+ && cd /tmp/slurm-25.05.1 \
+  --prefix=/usr \
+  --sysconfdir=/etc/slurmica \
+  --with-munge \
+  --with-hwloc \
+  --with-pmix \
+  --with-hdf5 \
+  --with-json \
+  --with-yaml \
+  --with-libcurl \
+ && make -j"$(nproc)" \
+ && make install DESTDIR=/tmp/pkgroot
+
+
+# ---------- Stage 2: the rest of it----------
 FROM debian:12
 #mariadb didn't want to install on slim??
 #FROM debian:12-slim
@@ -28,6 +68,8 @@ RUN apt-get update && apt-get install -y \
     vim \
     zsh \
     screen 
+
+    
     
     
 #    \
@@ -49,6 +91,8 @@ RUN apt-get update && apt-get install -y \
 RUN mkdir -p /var/lib/mysql /run/mysqld \
  && chown -R mysql:mysql /var/lib/mysql /run/mysqld
 
+ # Bring in the compiled Slurm files from the builder
+COPY --from=build /tmp/pkgroot/ /
 
 # Clean up and re-allow services for runtime containers
 RUN rm -f /usr/sbin/policy-rc.d && rm -rf /var/lib/apt/lists/*
