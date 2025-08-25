@@ -27,7 +27,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
   libyaml-dev \
   libfreeipmi-dev \
   libcurl4-openssl-dev \
-  git
+  git \
  && rm -rf /var/lib/apt/lists/*
 
 # Copy your tarball from the build context
