@@ -73,13 +73,10 @@ RUN apt-get update && apt-get install -y \
     ca-certificates \
     vim \
     zsh \
-    screen 
+    munge libmunge2 \
+    screen  \
+    && rm -rf /var/lib/apt/lists/*
 
-
-
-
-#    \
-#    && rm -rf /var/lib/apt/lists/*
 
 # Block any service start/stop during build (canonical Debian way)
 RUN printf '#!/bin/sh\nexit 101\n' > /usr/sbin/policy-rc.d \
@@ -87,6 +84,14 @@ RUN printf '#!/bin/sh\nexit 101\n' > /usr/sbin/policy-rc.d \
     # No-op stubs for systemctl/initctl some packages call
     && ln -sf /bin/true /bin/systemctl || true \
     && ln -sf /bin/true /sbin/initctl || true
+
+# Prepare MUNGE directories
+# Copy your MUNGE key from the repo into the image
+RUN mkdir -p /etc/munge /var/run/munge /var/lib/munge \
+ && chown -R munge:munge /etc/munge /var/run/munge /var/lib/munge
+COPY conf/munge.key /etc/munge/munge.key
+RUN chown munge:munge /etc/munge/munge.key && chmod 400 /etc/munge/munge.key
+
 
 RUN apt-get update && apt-get install -y \
     mariadb-server \
