@@ -86,9 +86,10 @@ RUN printf '#!/bin/sh\nexit 101\n' > /usr/sbin/policy-rc.d \
     && ln -sf /bin/true /sbin/initctl || true
 
 # Prepare MUNGE directories
-# Copy your MUNGE key from the repo into the image
-RUN mkdir -p /etc/munge /var/run/munge /var/lib/munge \
- && chown -R munge:munge /etc/munge /var/run/munge /var/lib/munge
+RUN mkdir -p /etc/munge /var/run/munge /var/lib/munge /var/log/munge \
+ && chown -R munge:munge /etc/munge /var/run/munge /var/lib/munge /var/log/munge \
+ && chmod 700 /var/run/munge /var/lib/munge /var/log/munge
+ # Copy  MUNGE key from the repo into the image
 COPY conf/munge.key /etc/munge/munge.key
 RUN chown munge:munge /etc/munge/munge.key && chmod 400 /etc/munge/munge.key
 
@@ -160,6 +161,14 @@ COPY conf/icasetupslurm.sh /usr/local/bin/icasetupslurm.sh
 RUN chmod +x /usr/local/bin/icasetupslurm.sh
 RUN ["/usr/local/bin/icasetupslurm.sh"]
 
+# Runtime entrypoint: prepares /slurm mount, starts munged, then execs CMD
+COPY conf/entrypoint.sh /usr/local/bin/entrypoint.sh
+RUN chmod +x /usr/local/bin/entrypoint.sh
+
+# Re-enable normal service behavior for any runtime installs
+RUN rm -f /usr/sbin/policy-rc.d
+
 WORKDIR /app
+ENTRYPOINT ["/usr/local/bin/entrypoint.sh"]
 CMD ["/usr/local/bin/start-mariadb.sh"]
 #CMD ["/bin/bash"]
