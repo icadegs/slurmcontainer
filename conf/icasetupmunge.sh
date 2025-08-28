@@ -1,16 +1,17 @@
 #!/bin/sh
-set -e
+set -eu
 
-# Prep dirs & perms every boot
-install -d -m 700 -o munge -g munge /var/run/munge /var/lib/munge
-install -d -m 700 -o munge -g munge /slurm/log/munge
-[ -f /etc/munge/munge.key ] && chown munge:munge /etc/munge/munge.key && chmod 400 /etc/munge/munge.key
+# Create container-side MUNGE directories with strict perms
+mkdir -p /etc/munge /var/run/munge /var/lib/munge /var/log/munge
+chown -R munge:munge /etc/munge /var/run/munge /var/lib/munge /var/log/munge
+chmod 700 /var/run/munge /var/lib/munge /var/log/munge
 
-# Start MUNGE
-/usr/sbin/munged --key-file=/etc/munge/munge.key \
-  --log-file=/slurm/log/munge/munged.log || true
+# Lock down key if it is present at build time (it might be mounted later instead)
+if [ -f /etc/munge/munge.key ]; then
+  chown munge:munge /etc/munge/munge.key
+  chmod 400 /etc/munge/munge.key
+else
+  echo "Note: /etc/munge/munge.key not present at build time (will be mounted or copied at runtime)."
+fi
 
-# Wait briefly for socket
-i=0; while [ $i -lt 25 ] && [ ! -S /var/run/munge/munge.socket.2 ]; do i=$((i+1)); sleep 0.2; done
-
-exec "$@"
+echo "MUNGE build-time setup complete."

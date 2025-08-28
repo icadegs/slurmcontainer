@@ -1,42 +1,42 @@
 #!/bin/sh
 set -e
 
-# --- Prepare persistent /slurm mount paths at runtime (host bind) ---
-for d in /slurm/log/munge /slurm/tmp /slurm/run /slurm/mysql; do
+# --- Prepare persistent /slurm subdirs (host bind mount) ---
+# Do NOT chown -R /slurm or /slurm/log; only create the dirs.
+for d in /slurm/tmp /slurm/run /slurm/log /slurm/mysql; do
   mkdir -p "$d" || true
 done
 
-# Try to secure the munge log directory on the host mount
-LOGDIR=/slurm/log/munge
-chown -R munge:munge "$LOGDIR" 2>/dev/null || true
-chmod 700 "$LOGDIR" 2>/dev/null || true
-
-# Determine logging mode for munged: file if secure/writable, else syslog
-LOG_OPTS=""
-if [ -w "$LOGDIR" ] && [ "$(stat -c %U "$LOGDIR" 2>/dev/null || echo root)" = "munge" ]; then
-  LOG_OPTS="--log-file=$LOGDIR/munged.log"
-else
-  echo "Warning: cannot secure $LOGDIR; using syslog for munged."
-  LOG_OPTS="--syslog"
-fi
-
-# Ensure container runtime dirs are correct every boot
+# --- Prepare MUNGE runtime dirs on container filesystem ---
+# These are NOT on the bind mount; safe, stable perms.
 install -d -m 700 -o munge -g munge /var/run/munge /var/lib/munge
-# Fix key perms if present (works for both baked-in and mounted keys)
+install -d -m 700 -o munge -g munge /var/log/munge
+
+# Key perms (works for baked-in or runtime-mounted key)
 if [ -f /etc/munge/munge.key ]; then
   chown munge:munge /etc/munge/munge.key 2>/dev/null || true
   chmod 400 /etc/munge/munge.key 2>/dev/null || true
+else
+  echo "WARNING: /etc/munge/munge.key missing; Slurm auth will fail until it is provided."
 fi
 
-# Start MUNGE first (daemonizes by default)
+# --- Start MUNGE (prefer container-local file log, fallback to --syslog) ---
+LOG_OPTS="--log-file=/var/log/munge/munged.log"
+if ! /usr/sbin/munged --test -f 2>/dev/null; then
+  # Quick sanity: if munged --test complains about logging, fallback to syslog
+  LOG_OPTS="--syslog"
+fi
+
+# Start daemon (daemonizes by default)
 if [ -f /etc/munge/munge.key ]; then
   /usr/sbin/munged --key-file=/etc/munge/munge.key $LOG_OPTS || true
-  # wait briefly for socket
-  i=0; while [ $i -lt 25 ] && [ ! -S /var/run/munge/munge.socket.2 ]; do i=$((i+1)); sleep 0.2; done
-else
-  echo "Warning: /etc/munge/munge.key not found; Slurm auth will fail until you provide it."
+  # Wait briefly for the socket to appear so Slurm starts reliably after
+  i=0
+  while [ $i -lt 25 ] && [ ! -S /var/run/munge/munge.socket.2 ]; do
+    i=$((i+1))
+    sleep 0.2
+  done
 fi
 
-# Hand off to the main process (from CMD or docker run args)
+# --- Hand off to the main process (from CMD or docker run args) ---
 exec "$@"
-
