@@ -140,7 +140,7 @@ RUN groupadd -r slurm && useradd -r -g slurm -d /var/lib/slurm -s /usr/sbin/nolo
 COPY conf/cgroup_allowed_devices_file.conf /etc/slurmica/cgroup_allowed_devices_file.conf
 COPY conf/cgroup.conf /etc/slurmica/cgroup.conf
 COPY conf/slurm.conf /etc/slurmica/slurm.conf
-COPY conf/slurmdb.conf /etc/slurmica/slurmdb.conf
+COPY conf/slurmdbd.conf /etc/slurmica/slurmdbd.conf
 
 # Cleanup
 #RUN rm /tmp/slurm-master.deb
