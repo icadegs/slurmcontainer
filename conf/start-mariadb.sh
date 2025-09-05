@@ -29,9 +29,8 @@ done
 
 # This solves the issue with the "first time run" of slurm.
 # [2025-09-05T14:59:19.959] fatal: No Assoc usage file (/slurm/slurmica/slurmctld/assoc_usage) to recover
-touch /slurm/slurmica/slurmctld/assoc_usage
-chown slurm:slurm /slurm/slurmica/slurmctld/assoc_usage
-chmod 600 /slurm/slurmica/slurmctld/assoc_usage
+mkdir -p /slurm/slurmica/slurmctld
+chown -R slurm:slurm /slurm/slurmica/slurmctld
 
 # Start slurmdbd
 echo "Starting slurmdbd..."
