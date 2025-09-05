@@ -19,5 +19,24 @@ exec mysqld \
     --datadir="$DATADIR" \
     --socket="$RUNDIR/mysqld.sock" \
     --pid-file="$RUNDIR/mysqld.pid" \
-    --user=mysql
+    --user=mysql  &
 
+# Wait for MariaDB to be ready
+echo "Waiting for MariaDB to accept connections..."
+until mysqladmin ping -h127.0.0.1 --silent; do
+  sleep 1
+done
+
+# Start slurmdbd
+echo "Starting slurmdbd..."
+/sbin/slurmdbd -Dvvv &
+
+# Optional: wait a few seconds before starting slurmctld
+sleep 2
+
+# Start slurmctld
+echo "Starting slurmctld..."
+/sbin/slurmctld -Dvvv &
+
+# Keep container alive by waiting on the first background job
+wait -n
