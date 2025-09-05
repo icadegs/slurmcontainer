@@ -141,6 +141,7 @@ COPY conf/cgroup_allowed_devices_file.conf /etc/slurmica/cgroup_allowed_devices_
 COPY conf/cgroup.conf /etc/slurmica/cgroup.conf
 COPY conf/slurm.conf /etc/slurmica/slurm.conf
 COPY conf/slurmdbd.conf /etc/slurmica/slurmdbd.conf
+RUN chmod 600 /etc/slurmica/slurmdbd.conf
 
 # Cleanup
 #RUN rm /tmp/slurm-master.deb
