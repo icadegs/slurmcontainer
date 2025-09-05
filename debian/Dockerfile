@@ -149,6 +149,13 @@ RUN  chown slurm:slurm /etc/slurmica/cgroup_allowed_devices_file.conf \
   && chown slurm:slurm /etc/slurmica/slurmdbd.conf  
 RUN  chmod 600 /etc/slurmica/slurmdbd.conf
 
+# This solves the issue with the "first time run" of slurm.
+# [2025-09-05T14:59:19.959] fatal: No Assoc usage file (/slurm/slurmica/slurmctld/assoc_usage) to recover
+RUN touch /slurm/slurmica/slurmctld/assoc_usage
+RUN chown slurm:slurm /slurm/slurmica/slurmctld/assoc_usage
+RUN chmod 600 /slurm/slurmica/slurmctld/assoc_usage
+
+
 # Cleanup
 #RUN rm /tmp/slurm-master.deb
 
