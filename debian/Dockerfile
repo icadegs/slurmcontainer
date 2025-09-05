@@ -120,6 +120,8 @@ COPY conf/99-slurm.cnf /etc/mysql/mariadb.conf.d/99-slurm.cnf
 COPY conf/start-mariadb.sh /usr/local/bin/start-mariadb.sh
 RUN chmod +x /usr/local/bin/start-mariadb.sh
 
+COPY conf/start-slurm.sh /usr/local/bin/start-slurm.sh
+RUN chmod +x /usr/local/bin/start-slurm.sh
 
 #NOTE:  Due to library mismatches, the slurm dep file was replaced
 # by a compile, but I still kept the configurate copies and
@@ -176,4 +178,5 @@ RUN rm -f /usr/sbin/policy-rc.d
 WORKDIR /app
 ENTRYPOINT ["/usr/local/bin/entrypoint.sh"]
 CMD ["/usr/local/bin/start-mariadb.sh"]
+CMD ["/usr/local/bin/start-slurm.sh"]
 #CMD ["/bin/bash"]
